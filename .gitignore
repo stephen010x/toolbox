@@ -1,0 +1,8 @@
+bin/
+tmp/
+old/
+*.o
+*.d
+*.old
+*.exe
+*.elf
