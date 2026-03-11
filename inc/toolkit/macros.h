@@ -1,5 +1,5 @@
-#ifndef UTILS_MACROS_H
-#define UTILS_MACROS_H
+#ifndef TOOLKIT_MACROS_H
+#define TOOLKIT_MACROS_H
 
 #include <stdbool.h>
 

@@ -1,5 +1,5 @@
-#ifndef HYPERC_DEBUG_H
-#define HYPERC_DEBUG_H
+#ifndef TOOLKIT_DEBUG_H
+#define TOOLKIT_DEBUG_H
 
 //#ifdef __DEBUG__
 #include <stdlib.h>
@@ -95,12 +95,14 @@ const char* filename_from_path(const char* path);
 
 #   define wassert(__expr)  NOP()
 //#   define error(__msg)     abort()
-#   define warn(__msg)      NOP()
+//#   define warn(__msg)      NOP()
 //#   define ffatal(...)      abort()
 //#   define ferror(...)      abort()
 #   define warnf(...)       NOP()
 
 #   define debugf(...)      NOP()
+
+#   define alertf(...)      NOP()
 
 
 #   define DEBUG(__statement)
@@ -121,6 +123,7 @@ const char* filename_from_path(const char* path);
 
 
 
+    // TODO: add some way to implement errorf
 #   define error(__ecode) do { IGNORE_UNUSED(                                       \
         SYSTEM_ERR(STR_ERROR, "\"error(%s)\" returned '%d'.", #__ecode, __ecode);   \
         return __ecode;                                                             \
@@ -174,14 +177,9 @@ const char* filename_from_path(const char* path);
         return __rcode;                         \
     } while(0)*/
 
-#   define warn(__msg) warnf(__msg)
+//#   define warn(__msg) warnf(__msg)
 
 //#   define ferror(...) do {} while(0)
-
-    // WARNING: Requires static literal for __format
-#   define warnf(__format, ...) do {                                \
-        SYSTEM_MSG(STR_WARN, __format __VA_OPT__(,) __VA_ARGS__);   \
-    } while(0)
 
 
 #   define DEBUG(__statement) __statement
@@ -198,16 +196,37 @@ const char* filename_from_path(const char* path);
             STRINGIFY(__LINE_C__) __VA_OPT__(,) __VA_ARGS__);         \
     } while(0)*/
 
-#   define debugf(__format, ...)                                    \
-        SYSTEM_MSG(STR_DEBUG, __format __VA_OPT__(,) __VA_ARGS__);
+
+#   define alertf(__type, __format, ...)
+        SYSTEM_MSG(__type, __format __VA_OPT__(,) __VA_ARGS__);
+
+
+
+    // WARNING: Requires static literal for __format
+    // TODO: make it so that this accepts runtime format strings
+// #   define warnf(__format, ...) do {                                \
+//         SYSTEM_MSG(STR_WARN, __format __VA_OPT__(,) __VA_ARGS__);   \
+//     } while(0)
+
+
+    // WARNING: Requires static literal for __format
+// #   define debugf(__format, ...)                                    \
+//         SYSTEM_MSG(STR_DEBUG, __format __VA_OPT__(,) __VA_ARGS__);
+
+
+    // WARNING: Requires static literal for __format
+// #define msgf(__format, ...)                                         \
+//         SYSTEM_MSG(STR_MSG, __format __VA_OPT__(,) __VA_ARGS__);
+
+
+#   define warnf (__format, ...) alertf(STR_WARN,  __format, ...)
+#   define debugf(__format, ...) alertf(STR_DEBUG, __format, ...)
+#   define msgf  (__format, ...) alertf(STR_MSG,   __format, ...)
 
 
 #endif
 
 
-
-#define msgf(__format, ...)                                         \
-        SYSTEM_MSG(STR_MSG, __format __VA_OPT__(,) __VA_ARGS__);
 
 
 
