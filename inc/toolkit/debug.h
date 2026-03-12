@@ -67,49 +67,28 @@ const char* filename_from_path(const char* path);
 
 
 
-#ifndef __DEBUG__
 
 
-#   define fatal(__ecode) do { IGNORE_UNUSED(                   \
-        exit(__ecode);                                          \
-    )} while(0)
+#ifdef __DEBUG__
 
+#   define DEBUG(__statement) __statement
 
-#   define error(__rcode) do { IGNORE_UNUSED(                   \
-        return (__rcode);                                       \
-    )} while(0)
+#   define debug(__statement) do {      \
+            __statement                 \
+        } while(0)
 
-
-#   define fassert(__expr) do { IGNORE_UNUSED(                  \
-        if (!(__expr)) abort();                                 \
-    )} while(0)
-
-#   undef  assert
-#   define assert(__expr, __rcode) do { IGNORE_UNUSED(          \
-        if (!(__expr)) return (__rcode);                        \
-    )} while(0)
-
-#   define vassert(__expr) do { IGNORE_UNUSED(                  \
-        if (!(__expr)) return;                                  \
-    )} while(0)
-
-#   define wassert(__expr)  NOP()
-//#   define error(__msg)     abort()
-//#   define warn(__msg)      NOP()
-//#   define ffatal(...)      abort()
-//#   define ferror(...)      abort()
-#   define warnf(...)       NOP()
-
-#   define debugf(...)      NOP()
-
-#   define alertf(...)      NOP()
-
+#else
 
 #   define DEBUG(__statement)
 #   define debug(__statement) NOP()
 
+#endif
 
-#else
+
+
+
+
+#if defined(__DEBUG__) || defined(__ENABLE_SYSMESSAGES__)
 
 
 //extern char *assert_format;
@@ -182,13 +161,6 @@ const char* filename_from_path(const char* path);
 //#   define ferror(...) do {} while(0)
 
 
-#   define DEBUG(__statement) __statement
-
-
-#   define debug(__statement) do {      \
-            __statement                 \
-        } while(0)
-
 
 
 /*#   define debugf(__format, ...) do {                               \
@@ -222,6 +194,48 @@ const char* filename_from_path(const char* path);
 #   define warnf (__format, ...) alertf(STR_WARN,  __format, ...)
 #   define debugf(__format, ...) alertf(STR_DEBUG, __format, ...)
 #   define msgf  (__format, ...) alertf(STR_MSG,   __format, ...)
+
+
+
+
+#else
+
+
+
+#   define fatal(__ecode) do { IGNORE_UNUSED(                   \
+        exit(__ecode);                                          \
+    )} while(0)
+
+
+#   define error(__rcode) do { IGNORE_UNUSED(                   \
+        return (__rcode);                                       \
+    )} while(0)
+
+
+#   define fassert(__expr) do { IGNORE_UNUSED(                  \
+        if (!(__expr)) abort();                                 \
+    )} while(0)
+
+#   undef  assert
+#   define assert(__expr, __rcode) do { IGNORE_UNUSED(          \
+        if (!(__expr)) return (__rcode);                        \
+    )} while(0)
+
+#   define vassert(__expr) do { IGNORE_UNUSED(                  \
+        if (!(__expr)) return;                                  \
+    )} while(0)
+
+#   define wassert(__expr)  NOP()
+//#   define error(__msg)     abort()
+//#   define warn(__msg)      NOP()
+//#   define ffatal(...)      abort()
+//#   define ferror(...)      abort()
+#   define warnf(...)       NOP()
+
+#   define debugf(...)      NOP()
+
+#   define alertf(...)      NOP()
+
 
 
 #endif
