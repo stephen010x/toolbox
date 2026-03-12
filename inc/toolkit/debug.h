@@ -122,6 +122,7 @@ const char* filename_from_path(const char* path);
 // TODO: use __VA_OPT__ to merge assert and vassert
 // TODO: I should probably change these from macros to functions at this point
 // "assertion '%s' failed. return code %d."
+// TODO: change assert to be this: assert(__expr, __rcode, __formatopt, ...)
 #   undef  assert
 #   define assert(__expr, __rcode) do { IGNORE_UNUSED(                          \
         if (!(__expr)) {                                                        \

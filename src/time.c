@@ -12,6 +12,9 @@
 static uint64_t start_us = 0;
 
 
+// TODO: !!!!!!!!!!!!!!!!!!!!!
+// TODO: replace shed_yield with something else
+// TODO: unless you want high fidelity
 
 
 // __inline__ uint64_t get_time(void) {
