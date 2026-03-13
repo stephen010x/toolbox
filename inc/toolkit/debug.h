@@ -10,7 +10,7 @@
 // https://github.com/lattera/glibc/blob/master/assert/assert.h
 
 // TODO move debug.h and macros.h to their own library like env or something
-#include "utils/macros.h"
+#include "macros.h"
 //#include "utils.h"
 
 
@@ -71,6 +71,7 @@ const char* filename_from_path(const char* path);
 
 #ifdef __DEBUG__
 
+//  NOTE: doesn't work if statement contains commas
 #   define DEBUG(__statement) __statement
 
 #   define debug(__statement) do {      \
@@ -91,7 +92,7 @@ const char* filename_from_path(const char* path);
 #if defined(__DEBUG__) || defined(__ENABLE_SYSMESSAGES__)
 
 
-//extern char *assert_format;
+    //extern char *assert_format;
 
 
 #   define fatal(__ecode) do { IGNORE_UNUSED(                                       \
@@ -110,7 +111,7 @@ const char* filename_from_path(const char* path);
 
 
 
-// "fatal assertion '%s' failed."
+    // "fatal assertion '%s' failed."
 #   define fassert(__expr) do { IGNORE_UNUSED(                                  \
         if (!(__expr)) {                                                        \
             SYSTEM_ERR(STR_FATAL, "fatal assertion '%s'.", #__expr);            \
@@ -119,10 +120,10 @@ const char* filename_from_path(const char* path);
         }                                                                       \
     )} while(0)
 
-// TODO: use __VA_OPT__ to merge assert and vassert
-// TODO: I should probably change these from macros to functions at this point
-// "assertion '%s' failed. return code %d."
-// TODO: change assert to be this: assert(__expr, __rcode, __formatopt, ...)
+    // TODO: use __VA_OPT__ to merge assert and vassert
+    // TODO: I should probably change these from macros to functions at this point
+    // "assertion '%s' failed. return code %d."
+    // TODO: change assert to be this: assert(__expr, __rcode, __formatopt, ...)
 #   undef  assert
 #   define assert(__expr, __rcode) do { IGNORE_UNUSED(                          \
         if (!(__expr)) {                                                        \
@@ -131,7 +132,7 @@ const char* filename_from_path(const char* path);
         }                                                                       \
     )} while(0)
 
-// "assertion '%s' failed."
+    // "assertion '%s' failed."
 #   define vassert(__expr) do { IGNORE_UNUSED(                                  \
         if (!(__expr)) {                                                        \
             SYSTEM_ERR(STR_ERROR, "assertion '%s'.", #__expr);                  \
@@ -139,7 +140,7 @@ const char* filename_from_path(const char* path);
         }                                                                       \
     )} while(0)
 
-// "warning assertion '%s' failed."
+    // "warning assertion '%s' failed."
 #   define wassert(__expr) do { IGNORE_UNUSED(                                  \
         if (!(__expr)) {                                                        \
             SYSTEM_ERR(STR_WARN, "warning assertion '%s'.", #__expr);           \
@@ -170,31 +171,42 @@ const char* filename_from_path(const char* path);
     } while(0)*/
 
 
-#   define alertf(__type, __format, ...)
-        SYSTEM_MSG(__type, __format __VA_OPT__(,) __VA_ARGS__);
+#   ifdef __DEBUG__
+
+#       define alertf(__type, __format, ...)                                \
+            SYSTEM_ERR(__type, __format __VA_OPT__(,) __VA_ARGS__);
+            
+#   else
+
+#       define alertf(__type, __format, ...)                                \
+            SYSTEM_MSG(__type, __format __VA_OPT__(,) __VA_ARGS__);
+
+#   endif
 
 
 
+/*
     // WARNING: Requires static literal for __format
     // TODO: make it so that this accepts runtime format strings
-// #   define warnf(__format, ...) do {                                \
-//         SYSTEM_MSG(STR_WARN, __format __VA_OPT__(,) __VA_ARGS__);   \
-//     } while(0)
+#   define warnf(__format, ...) do {                                \
+        SYSTEM_MSG(STR_WARN, __format __VA_OPT__(,) __VA_ARGS__);   \
+    } while(0)
 
 
     // WARNING: Requires static literal for __format
-// #   define debugf(__format, ...)                                    \
-//         SYSTEM_MSG(STR_DEBUG, __format __VA_OPT__(,) __VA_ARGS__);
+#   define debugf(__format, ...)                                    \
+        SYSTEM_MSG(STR_DEBUG, __format __VA_OPT__(,) __VA_ARGS__);
 
 
     // WARNING: Requires static literal for __format
-// #define msgf(__format, ...)                                         \
-//         SYSTEM_MSG(STR_MSG, __format __VA_OPT__(,) __VA_ARGS__);
+#define msgf(__format, ...)                                         \
+        SYSTEM_MSG(STR_MSG, __format __VA_OPT__(,) __VA_ARGS__);
+*/
 
 
-#   define warnf (__format, ...) alertf(STR_WARN,  __format, ...)
-#   define debugf(__format, ...) alertf(STR_DEBUG, __format, ...)
-#   define msgf  (__format, ...) alertf(STR_MSG,   __format, ...)
+#   define warnf(__format, ...)  alertf(STR_WARN,  __format, __VA_ARGS__)
+#   define debugf(__format, ...) alertf(STR_DEBUG, __format, __VA_ARGS__)
+#   define msgf(__format, ...)   alertf(STR_MSG,   __format, __VA_ARGS__)
 
 
 
