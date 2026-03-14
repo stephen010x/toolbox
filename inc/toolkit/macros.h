@@ -161,6 +161,7 @@
 #define segfault() crash()
 
 
+// onl works for positive values of __b
 #define mod(__a, __b) ({                        \
         typeof(__a) a = (__a);                  \
         typeof(__b) b = (__b);                  \
