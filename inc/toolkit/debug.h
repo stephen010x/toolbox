@@ -147,6 +147,14 @@ const char* filename_from_path(const char* path);
         }                                                                       \
     )} while(0)
 
+
+#   define jassert(__expr, __label) do { IGNORE_UNUSED(                         \
+        if (!(__expr)) {                                                        \
+            SYSTEM_ERR(STR_ERROR, "assertion '%s'.", #__expr);                  \
+            goto __label;                                                       \
+        }                                                                       \
+    )} while(0)
+
 /*#   define fatal(__msg) do {            \
         printf(STR_FATAL "\t" __msg);   \
         abort();                        \
@@ -239,10 +247,16 @@ const char* filename_from_path(const char* path);
     )} while(0)
 
 #   define wassert(__expr)  NOP()
+
+#   define jassert(__expr, __label) do { IGNORE_UNUSED(         \
+        if (!(__expr)) goto __label;                            \
+    )} while(0)
+
 //#   define error(__msg)     abort()
 //#   define warn(__msg)      NOP()
 //#   define ffatal(...)      abort()
 //#   define ferror(...)      abort()
+
 #   define warnf(...)       NOP()
 
 #   define debugf(...)      NOP()
