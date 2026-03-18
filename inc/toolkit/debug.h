@@ -41,16 +41,16 @@
 #define STR_MSG                     "[msg]"
 
 
-#define SYSTEM_MSG(__status, __format, ...) do {                                    \
-        printf(__status "\t" STR_BLUE("%s") ":" STR_BLUE("%s") ": " __format "\n",  \
-            __FILENAME__,  STRINGIFY(__LINE__) __VA_OPT__(,) __VA_ARGS__);          \
+#define SYSTEM_MSG(__status, __format, ...) do {                                            \
+        fprintf(stderr, __status "\t" STR_BLUE("%s") ":" STR_BLUE("%s") ": " __format "\n", \
+            __FILENAME__,  STRINGIFY(__LINE__) __VA_OPT__(,) __VA_ARGS__);                  \
     } while(0)
 
 
-#define SYSTEM_ERR(__status, __format, ...) do {                                            \
-        printf(__status "\t" STR_BLUE(__FILENAME__) ":" STR_BLUE(STRINGIFY(__LINE__)) ": "  \
-            STR_BLUE("%s(") "..." STR_BLUE(")") ": " __format "\n",                         \
-            __func__ __VA_OPT__(,) __VA_ARGS__);                                            \
+#define SYSTEM_ERR(__status, __format, ...) do {                                                    \
+        fprintf(stderr, __status "\t" STR_BLUE(__FILENAME__) ":" STR_BLUE(STRINGIFY(__LINE__)) ": " \
+            STR_BLUE("%s(") "..." STR_BLUE(")") ": " __format "\n",                                 \
+            __func__ __VA_OPT__(,) __VA_ARGS__);                                                    \
     } while(0)
 
 
