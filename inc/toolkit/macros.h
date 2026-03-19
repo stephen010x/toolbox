@@ -173,7 +173,7 @@
         typeof(__a) a = (__a);                  \
         typeof(__b) b = (__b);                  \
         typeof(__a) rem = a % b;                \
-        typeof(__a)(rem >= 0 ? rem : b+rem);    \
+        (typeof(__a))((rem >= 0) ? rem : b+rem);\
     })
 
 
