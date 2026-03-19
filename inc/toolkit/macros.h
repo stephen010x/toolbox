@@ -22,6 +22,7 @@
 // https://gcc.gnu.org/onlinedocs/gcc/Attributes.html
 // https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html
 // https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html
+// https://gcc.gnu.org/onlinedocs/gcc/Common-Attributes.html
 // =========================================
 // ========= FUNCTION ATTRIBUTES ===========
 // force inline
@@ -65,8 +66,10 @@
 #define __flatten __attribute__((flatten))
 // function gets called before main. I think it has to have (void) arguments
 #define __construct __attribute__((constructor))
+#define __construct2(__priority) __attribute__((constructor(__priority)))
 // function gets called after main returns. I think it has to have (void) arguments
 #define __destruct __attribute__((destructor))
+#define __destruct2(__priority) __attribute__((destructor(__priority)))
 
 // =========================================
 // ========= VARIABLE ATTRIBUTES ===========
@@ -118,6 +121,10 @@
 // tells the compiler to assume a statement is true for optimization
 // for instance, __assume(x == 42) or __assume(++y == 43)
 #define __assume(__statement) __attribute__((assume(__statement)))
+// the compiler will pretend that the value is used by something
+// and as a result code will be emitted even if it appears to not be referenced
+// works for both functions and variables
+#define __used __attribute__((used))
 
 
 // =========================================
