@@ -1,6 +1,30 @@
 #ifndef TOOLKIT_DEBUG_H
 #define TOOLKIT_DEBUG_H
 
+
+/*  TODO:
+    Replace asserts with errors. I mean it isn't that hard to have a conditional
+    if (err) error(-2);
+    if (err) errorf(-2, "you messed up, %s", name);
+    if (err) fatal();
+    if (err) fatalf("hello world");
+    if (err) fail(_exitlabel);
+    if (err) failf(_exitlabel, "on noes!");
+
+    Then again, I should keep assertions for when I want to know what check failed
+    assert(a != b)
+
+    But overall encourage the use of the errors, and only use asserts when 
+    the conditional check actually matters, rather than a simple error
+    assert(!err) // don't do this. Just use `if (err) error(err);
+
+*/
+
+
+
+
+
+
 //#ifdef __DEBUG__
 #include <stdlib.h>
 #include <stdio.h>
@@ -20,10 +44,11 @@
 
 
 #define ANSI_DEFAULT   "\033[0m"
-#define ANSI_BLACK     "\033[0;30m"
-#define ANSI_RED       "\033[0;31m"
-#define ANSI_YELLOW    "\033[0;33m"
-#define ANSI_BLUE      "\033[0;34m"
+#define ANSI_BLACK     "\033[30m"
+#define ANSI_RED       "\033[31m"
+#define ANSI_YELLOW    "\033[33m"
+#define ANSI_BLUE      "\033[34m"
+#define ANSI_GREEN     "\033[32m"
 
 #define ANSI_BG_RED     "\033[41m"
 
@@ -32,25 +57,29 @@
 #define STR_RED(__str)    ANSI_RED    __str ANSI_DEFAULT
 #define STR_YELLOW(__str) ANSI_YELLOW __str ANSI_DEFAULT
 #define STR_BLUE(__str)   ANSI_BLUE   __str ANSI_DEFAULT
+#define STR_GREEN(__str)  ANSI_GREEN  __str ANSI_DEFAULT
 
 //#define STR_FATAL   ANSI_BLACK ANSI_REDBG "[fatal]"   ANSI_DEFAULT
 #define STR_FATAL   ANS_BLACK_REDBG "[fatal]"   ANSI_DEFAULT
 #define STR_ERROR   ANSI_RED        "[error]"   ANSI_DEFAULT
 #define STR_WARN    ANSI_YELLOW     "[warn] "   ANSI_DEFAULT
+#define STR_PASS    ANSI_GREEN      "[pass] "   ANSI_DEFAULT
 #define STR_DEBUG                   "[debug]"
 #define STR_MSG                     "[msg]"
 
 
-#define SYSTEM_MSG(__status, __format, ...) do {                                            \
-        fprintf(stderr, __status "\t" STR_BLUE("%s") ":" STR_BLUE("%s") ": " __format "\n", \
-            __FILENAME__,  STRINGIFY(__LINE__) __VA_OPT__(,) __VA_ARGS__);                  \
+#define SYSTEM_MSG(__status, __format, ...) do {                                \
+        fprintf(stderr, __status "\t" STR_BLUE("%s") ":" STR_BLUE("%s") ": "    \
+            __format "\n",                                                      \
+            __FILENAME__,  STRINGIFY(__LINE__) __VA_OPT__(,) __VA_ARGS__);      \
     } while(0)
 
 
-#define SYSTEM_ERR(__status, __format, ...) do {                                                    \
-        fprintf(stderr, __status "\t" STR_BLUE(__FILENAME__) ":" STR_BLUE(STRINGIFY(__LINE__)) ": " \
-            STR_BLUE("%s(") "..." STR_BLUE(")") ": " __format "\n",                                 \
-            __func__ __VA_OPT__(,) __VA_ARGS__);                                                    \
+#define SYSTEM_ERR(__status, __format, ...) do {                        \
+        fprintf(stderr, __status "\t" STR_BLUE(__FILENAME__) ":"        \
+            STR_BLUE(STRINGIFY(__LINE__)) ": "                          \
+            STR_BLUE("%s(") "..." STR_BLUE(")") ": " __format "\n",     \
+            __func__ __VA_OPT__(,) __VA_ARGS__);                        \
     } while(0)
 
 
@@ -96,7 +125,7 @@ const char* filename_from_path(const char* path);
 
 
 #   define fatal(__ecode) do { IGNORE_UNUSED(                                       \
-        SYSTEM_ERR(STR_FATAL, "\"fatal(%s)\" returned '%d'.", #__ecode, __ecode);   \
+        SYSTEM_ERR(STR_FATAL, "\"fatal(%s)\" returned '%d'", #__ecode, __ecode);    \
         fflush(stdout);                                                             \
         exit(__ecode);                                                              \
     )} while(0)
@@ -105,7 +134,7 @@ const char* filename_from_path(const char* path);
 
     // TODO: add some way to implement errorf
 #   define error(__ecode) do { IGNORE_UNUSED(                                       \
-        SYSTEM_ERR(STR_ERROR, "\"error(%s)\" returned '%d'.", #__ecode, __ecode);   \
+        SYSTEM_ERR(STR_ERROR, "\"error(%s)\" returned '%d'", #__ecode, __ecode);    \
         return __ecode;                                                             \
     )} while(0)
 
@@ -114,7 +143,7 @@ const char* filename_from_path(const char* path);
     // "fatal assertion '%s' failed."
 #   define fassert(__expr) do { IGNORE_UNUSED(                                  \
         if (!(__expr)) {                                                        \
-            SYSTEM_ERR(STR_FATAL, "fatal assertion '%s'.", #__expr);            \
+            SYSTEM_ERR(STR_FATAL, "fatal assertion '%s'", #__expr);             \
             fflush(stdout);                                                     \
             abort();                                                            \
         }                                                                       \
@@ -127,7 +156,7 @@ const char* filename_from_path(const char* path);
 #   undef  assert
 #   define assert(__expr, __rcode) do { IGNORE_UNUSED(                          \
         if (!(__expr)) {                                                        \
-            SYSTEM_ERR(STR_ERROR, "assertion '%s'.", #__expr);                  \
+            SYSTEM_ERR(STR_ERROR, "assertion '%s'", #__expr);                   \
             return (__rcode);                                                   \
         }                                                                       \
     )} while(0)
@@ -135,7 +164,7 @@ const char* filename_from_path(const char* path);
     // "assertion '%s' failed."
 #   define vassert(__expr) do { IGNORE_UNUSED(                                  \
         if (!(__expr)) {                                                        \
-            SYSTEM_ERR(STR_ERROR, "assertion '%s'.", #__expr);                  \
+            SYSTEM_ERR(STR_ERROR, "assertion '%s'", #__expr);                   \
             return;                                                             \
         }                                                                       \
     )} while(0)
@@ -143,14 +172,14 @@ const char* filename_from_path(const char* path);
     // "warning assertion '%s' failed."
 #   define wassert(__expr) do { IGNORE_UNUSED(                                  \
         if (!(__expr)) {                                                        \
-            SYSTEM_ERR(STR_WARN, "warning assertion '%s'.", #__expr);           \
+            SYSTEM_ERR(STR_WARN, "warning assertion '%s'", #__expr);            \
         }                                                                       \
     )} while(0)
 
 
 #   define jassert(__expr, __label) do { IGNORE_UNUSED(                         \
         if (!(__expr)) {                                                        \
-            SYSTEM_ERR(STR_ERROR, "assertion '%s'.", #__expr);                  \
+            SYSTEM_ERR(STR_ERROR, "assertion '%s'", #__expr);                   \
             goto __label;                                                       \
         }                                                                       \
     )} while(0)
@@ -183,7 +212,7 @@ const char* filename_from_path(const char* path);
 
 #       define alertf(__type, __format, ...)                                \
             SYSTEM_ERR(__type, __format __VA_OPT__(,) __VA_ARGS__);
-            
+
 #   else
 
 #       define alertf(__type, __format, ...)                                \
@@ -191,6 +220,8 @@ const char* filename_from_path(const char* path);
 
 #   endif
 
+#       define noticef(__type, __format, ...)                               \
+            SYSTEM_MSG(__type, __format __VA_OPT__(,) __VA_ARGS__);
 
 
 /*
@@ -214,7 +245,9 @@ const char* filename_from_path(const char* path);
 
 #   define warnf(__format, ...)  alertf(STR_WARN,  __format, __VA_ARGS__)
 #   define debugf(__format, ...) alertf(STR_DEBUG, __format, __VA_ARGS__)
-#   define msgf(__format, ...)   alertf(STR_MSG,   __format, __VA_ARGS__)
+
+#   define msgf(__format, ...)   noticef(STR_MSG,   __format, __VA_ARGS__)
+#   define passf(__format, ...)  noticef(STR_PASS,  __format, __VA_ARGS__)
 
 
 
@@ -258,10 +291,10 @@ const char* filename_from_path(const char* path);
 //#   define ferror(...)      abort()
 
 #   define warnf(...)       NOP()
-
 #   define debugf(...)      NOP()
-
 #   define alertf(...)      NOP()
+#   define noticef(...)     NOP()
+#   define passf(...)       NOP()
 
 
 

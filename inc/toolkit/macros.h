@@ -70,6 +70,16 @@
 // function gets called after main returns. I think it has to have (void) arguments
 #define __destruct __attribute__((destructor))
 #define __destruct2(__priority) __attribute__((destructor(__priority)))
+// optimize function
+#define __optimize_0        __attribute__((optimize("O0")))
+#define __optimize_1        __attribute__((optimize("O1")))
+#define __optimize_2        __attribute__((optimize("O2")))
+#define __optimize_3        __attribute__((optimize("O3")))
+#define __optimize_size     __attribute__((optimize("Os")))
+#define __optimize_fast     __attribute__((optimize("Ofast")))
+#define __optimize_debug    __attribute__((optimize("Od")))
+#define __optimize_tiny     __attribute__((optimize("Oz")))
+#define __optimize          __optimize_size
 
 // =========================================
 // ========= VARIABLE ATTRIBUTES ===========
