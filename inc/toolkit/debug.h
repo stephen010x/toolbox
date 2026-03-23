@@ -18,6 +18,11 @@
     the conditional check actually matters, rather than a simple error
     assert(!err) // don't do this. Just use `if (err) error(err);
 
+
+    TODO:
+    - I should add a stack trace so that only the deepest
+      error messages are neccessary, and the rest just return codes.
+    - debugf should again be debug mode only, whereas msgf is non-debug
 */
 
 
