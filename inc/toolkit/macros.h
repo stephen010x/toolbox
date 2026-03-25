@@ -64,6 +64,8 @@
 // this attribute will inline all of the functions it calls
 // I think it will only flatten functions in the same translation unit though.
 #define __flatten __attribute__((flatten))
+// mark as unused
+#define __unused __attribute__((unused))
 // function gets called before main. I think it has to have (void) arguments
 #define __construct __attribute__((constructor))
 #define __construct2(__priority) __attribute__((constructor(__priority)))
