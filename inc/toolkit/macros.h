@@ -18,6 +18,14 @@
 //#define __force_inline __FORCE_INLINE__
 
 
+#undef __noinline
+#undef __const
+#undef __fastcall
+#undef __pure
+#undef __unused
+#undef __packed
+#undef __used
+
 
 // https://gcc.gnu.org/onlinedocs/gcc/Attributes.html
 // https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html
