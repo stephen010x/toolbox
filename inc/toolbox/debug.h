@@ -138,7 +138,9 @@ const char* filename_from_path(const char* path);
 
 
     // TODO: add some way to implement errorf
-#   define error(__ecode) do { IGNORE_UNUSED(                                       \
+    // conflicts with error attribute
+    // #   define error(__rcode) do { IGNORE_UNUSED(
+#   define derror(__ecode) do { IGNORE_UNUSED(                                       \
         SYSTEM_ERR(STR_ERROR, "\"error(%s)\" returned '%d'", #__ecode, __ecode);    \
         return __ecode;                                                             \
     )} while(0)
@@ -266,7 +268,9 @@ const char* filename_from_path(const char* path);
     )} while(0)
 
 
-#   define error(__rcode) do { IGNORE_UNUSED(                   \
+// conflicts with error attribute
+// #   define error(__rcode) do { IGNORE_UNUSED(
+#   define derror(__rcode) do { IGNORE_UNUSED(                  \
         return (__rcode);                                       \
     )} while(0)
 

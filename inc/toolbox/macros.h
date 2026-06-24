@@ -39,6 +39,7 @@
 #define __noinline __attribute__((noinline))
 #define __weak_inline inline
 //#define __inline   __force_inline
+// #define __inline__ static inline
 #define __inline__ __force_inline
 
 #define __noreturn __attribute__((noreturn))
@@ -89,7 +90,8 @@
 #define __optimize_fast     __attribute__((optimize("Ofast")))
 #define __optimize_debug    __attribute__((optimize("Od")))
 #define __optimize_tiny     __attribute__((optimize("Oz")))
-#define __optimize          __optimize_size
+// #define __optimize          __optimize_size
+#define __optimize(...)     __attribute__((optimize(__VA_ARGS__)))
 
 // =========================================
 // ========= VARIABLE ATTRIBUTES ===========
@@ -134,7 +136,7 @@
 #define __deprecated __attribute__((deprecated))
 
 // =========================================
-// ========= MISC ATTRIBUTES ==============
+// ========= MISC ATTRIBUTES ===============
 // for switch case statements. It avoids compiler warnings if the fallthrough was
 // intentional
 #define __fallthrough __attribute__((fallthrough))
@@ -145,6 +147,17 @@
 // and as a result code will be emitted even if it appears to not be referenced
 // works for both functions and variables
 #define __used __attribute__((used))
+
+
+#define __error(__msg) __attribute__((error(__msg)))
+#define __warn(__msg) __attribute__((warning(__msg)))
+
+#define __missing __error("not implemented")
+#define __finish  __error("unfinished implementation")
+#define __broken  __error("broken implementation")
+#define __todo    __warn("TODO: needs improvement")
+
+#define TODO _Pragma("GCC warning \"TODO\"")
 
 
 // =========================================
